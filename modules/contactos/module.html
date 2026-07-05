@@ -1,0 +1,52 @@
+<!-- modules/contactos/module.html -->
+<div x-data="contactosData()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="bi bi-people text-primary"></i> Contactos
+    </h2>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button class="btn btn-primary" onclick="AHContactos.abrirForm()">
+      <i class="bi bi-plus-lg"></i> Agregar
+    </button>
+    <input type="search" id="contactos-busqueda" placeholder="Buscar contactos..." class="input input-bordered flex-1 min-w-[200px]"
+           oninput="AHContactos.filtrar(this.value)" />
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-outline btn-sm gap-2">
+        <i class="bi bi-funnel"></i> Etiqueta
+      </label>
+      <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+        <li><a onclick="AHContactos.filtrarPorEtiqueta('prospecto')">Prospecto</a></li>
+        <li><a onclick="AHContactos.filtrarPorEtiqueta('cliente')">Cliente</a></li>
+        <li><a onclick="AHContactos.filtrarPorEtiqueta('VIP')">VIP</a></li>
+        <li><a onclick="AHContactos.filtrarPorEtiqueta('inactivo')">Inactivo</a></li>
+        <li class="divider my-1"></li>
+        <li><a onclick="AHContactos.filtrarPorEtiqueta('')">Todas</a></li>
+      </ul>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="AHContactos.exportCSV()" title="Exportar CSV">
+      <i class="bi bi-download"></i> CSV
+    </button>
+  </div>
+
+  <!-- Lista -->
+  <div id="contactos-lista">
+    <div class="space-y-3">
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+      <div class="skeleton h-12 w-full"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function contactosData() {
+  return {
+    init() {
+      // Ya manejado por module.js
+    }
+  };
+}
+</script>

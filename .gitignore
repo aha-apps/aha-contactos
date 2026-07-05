@@ -1,0 +1,8 @@
+# AHA Contactos — .gitignore
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+dist/
+*.ateje-backup
+.env

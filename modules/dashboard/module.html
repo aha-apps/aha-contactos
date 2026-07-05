@@ -1,0 +1,66 @@
+<!-- modules/dashboard/module.html -->
+<div x-data="dashboardData()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+    <i class="bi bi-speedometer2 text-primary"></i> Dashboard
+  </h2>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="stat bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <div class="stat-figure text-primary"><i class="bi bi-people text-3xl"></i></div>
+      <div class="stat-title text-sm">Total Contactos</div>
+      <div class="stat-value text-3xl font-bold text-primary" id="stat-total">0</div>
+    </div>
+    <div class="stat bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <div class="stat-figure text-success"><i class="bi bi-person-plus text-3xl"></i></div>
+      <div class="stat-title text-sm">Nuevos Hoy</div>
+      <div class="stat-value text-3xl font-bold text-success" id="stat-hoy">0</div>
+    </div>
+    <div class="stat bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <div class="stat-figure text-warning"><i class="bi bi-bell text-3xl"></i></div>
+      <div class="stat-title text-sm">Pendientes</div>
+      <div class="stat-value text-3xl font-bold text-warning" id="stat-pendientes">0</div>
+    </div>
+    <div class="stat bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <div class="stat-figure text-info"><i class="bi bi-calendar-check text-3xl"></i></div>
+      <div class="stat-title text-sm">Recordatorios Hoy</div>
+      <div class="stat-value text-3xl font-bold text-info" id="stat-pendientes-hoy">0</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Donut Chart -->
+    <div class="bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <h3 class="font-semibold mb-4 flex items-center gap-2">
+        <i class="bi bi-pie-chart text-primary"></i> Contactos por Etiqueta
+      </h3>
+      <div class="h-64 flex items-center justify-center">
+        <canvas id="chart-donut"></canvas>
+      </div>
+    </div>
+
+    <!-- Últimos Contactos -->
+    <div class="bg-base-100 rounded-xl shadow-sm border border-base-200 p-4">
+      <h3 class="font-semibold mb-4 flex items-center gap-2">
+        <i class="bi bi-clock-history text-primary"></i> Últimos Contactos
+      </h3>
+      <div id="ultimos-contactos" class="space-y-1">
+        <div class="space-y-3">
+          <div class="skeleton h-14 w-full"></div>
+          <div class="skeleton h-14 w-full"></div>
+          <div class="skeleton h-14 w-full"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dashboardData() {
+  return {
+    init() {
+      // Ya manejado por module.js
+    }
+  };
+}
+</script>

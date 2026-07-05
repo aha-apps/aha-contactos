@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AHA Contactos</title>
+  <meta name="description" content="CRM manual companion para vendedores" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/icons/icon-192.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.svg" />
+
+  <!-- CSS Base -->
+  <link rel="stylesheet" href="assets/css/tailwind.min.css" />
+  <link rel="stylesheet" href="assets/css/daisyui.min.css" />
+  <link rel="stylesheet" href="assets/css/bootstrap-icons.css" />
+  <link rel="stylesheet" href="assets/css/animate.min.css" />
+
+  <style>
+    /* Base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-family: 'Inter', system-ui, -apple-system, sans-serif; scroll-behavior: smooth; }
+    body { min-height: 100vh; background: var(--fallback-b1, oklch(var(--b1))); }
+
+    /* Skeleton shimmer */
+    .skeleton { background: linear-gradient(90deg, var(--fallback-b2, oklch(var(--b2))) 25%, var(--fallback-b3, oklch(var(--b3))) 50%, var(--fallback-b2, oklch(var(--b2))) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--rounded-box, 1rem); }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* x-cloak */
+    [x-cloak] { display: none !important; }
+
+    /* Transitions */
+    .fade-enter { opacity: 0; transform: translateY(10px); }
+    .fade-enter-active { opacity: 1; transform: translateY(0); transition: all 0.3s ease-out; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--fallback-bc, oklch(var(--bc) / 0.2)); border-radius: 3px; }
+
+    /* Line clamp */
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 0.75rem; transition: all 0.2s; color: var(--fallback-bc, oklch(var(--bc) / 0.7)); text-decoration: none; }
+    .sidebar-link:hover { background: var(--fallback-b2, oklch(var(--b2))); color: var(--fallback-bc, oklch(var(--bc))); }
+    .sidebar-link.active { background: var(--fallback-p, oklch(var(--p) / 0.12)); color: var(--fallback-p, oklch(var(--p))); font-weight: 600; }
+    .sidebar-link.active i { color: var(--fallback-p, oklch(var(--p))); }
+
+    /* Bottom nav mobile */
+    .bottom-nav-link { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 12px; border-radius: 8px; transition: all 0.2s; color: var(--fallback-bc, oklch(var(--bc) / 0.5)); text-decoration: none; font-size: 10px; }
+    .bottom-nav-link i { font-size: 20px; transition: all 0.2s; }
+    .bottom-nav-link.active { color: var(--fallback-p, oklch(var(--p))); }
+    .bottom-nav-link.active i { transform: scale(1.1); }
+
+    /* Toast z-index fix */
+    .toast { z-index: 100 !important; }
+
+    /* Modal overlay fix */
+    .modal-box { max-height: 90vh; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <!-- Alpine store init (must be before Alpine processes DOM) -->
+  <script>
+    document.addEventListener('alpine:init', function() {
+      if (typeof Alpine !== 'undefined') {
+        Alpine.store('theme', {
+          mode: localStorage.getItem('aha_theme_mode') || 'light',
+          toggle() {
+            this.mode = this.mode === 'light' ? 'dark' : 'light';
+            localStorage.setItem('aha_theme_mode', this.mode);
+            document.documentElement.setAttribute('data-theme', this.mode);
+            document.documentElement.setAttribute('data-mode', this.mode);
+          }
+        });
+        Alpine.store('router', { current: window.location.hash.replace('#', '') || 'dashboard', previous: null, module: null });
+        Alpine.store('network', { online: navigator.onLine });
+      }
+    });
+  </script>
+
+  <!-- App Shell -->
+  <div class="drawer lg:drawer-open">
+    <input id="app-drawer" type="checkbox" class="drawer-toggle" />
+
+    <!-- Main Content -->
+    <div class="drawer-content flex flex-col min-h-screen">
+      <!-- Top Navbar -->
+      <div class="navbar bg-base-100 border-b border-base-200 sticky top-0 z-30 backdrop-blur-sm bg-base-100/90">
+        <div class="flex-none lg:hidden">
+          <label for="app-drawer" class="btn btn-square btn-ghost">
+            <i class="bi bi-list text-xl"></i>
+          </label>
+        </div>
+        <div class="flex-1 flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-content font-bold text-sm">
+            AC
+          </div>
+          <span class="font-bold text-lg hidden sm:inline">AHA Contactos</span>
+        </div>
+        <div class="flex-none flex items-center gap-1">
+          <!-- Network status -->
+          <div x-data x-init="$store.network = { online: navigator.onLine }"
+               x-on:connection-change.window="$store.network.online = $event.detail.online"
+               class="tooltip tooltip-bottom"
+               :data-tip="$store.network.online ? 'En línea' : 'Sin conexión'">
+            <span class="badge badge-sm gap-1" :class="$store.network.online ? 'badge-success' : 'badge-error'">
+              <i :class="$store.network.online ? 'bi-wifi' : 'bi-wifi-off'"></i>
+              <span class="hidden sm:inline" x-text="$store.network.online ? 'En línea' : 'Sin conexión'"></span>
+            </span>
+          </div>
+
+          <!-- Theme toggle -->
+          <button class="btn btn-square btn-ghost" onclick="Alpine.store('theme').toggle()" title="Cambiar tema">
+            <i class="bi bi-moon-fill hidden dark:inline"></i>
+            <i class="bi bi-sun-fill dark:hidden"></i>
+          </button>
+
+          <!-- Search -->
+          <button class="btn btn-square btn-ghost hidden sm:flex" onclick="window.searchPalette?.open()" title="Buscar (Ctrl+K)">
+            <i class="bi bi-search"></i>
+          </button>
+
+          <!-- Export button -->
+          <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-square btn-ghost">
+              <i class="bi bi-box-arrow-up"></i>
+            </label>
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+              <li><a onclick="SyncEngine.exportar()"><i class="bi bi-download"></i> Exportar respaldo</a></li>
+              <li>
+                <label class="cursor-pointer">
+                  <span onclick="document.getElementById('import-backup').click()">
+                    <i class="bi bi-upload"></i> Importar respaldo
+                  </span>
+                  <input id="import-backup" type="file" accept=".ateje-backup" class="hidden"
+                         onchange="SyncEngine.importar(this.files[0])" />
+                </label>
+              </li>
+              <li class="divider my-1"></li>
+              <li><a onclick="window.cargarLicencia()"><i class="bi bi-key"></i> Cargar licencia</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module Container -->
+      <main class="flex-1 p-4 sm:p-6 max-w-6xl w-full mx-auto">
+        <div id="module-container">
+          <div class="space-y-4 p-4">
+            <div class="skeleton h-8 w-64 mb-4"></div>
+            <div class="skeleton h-48 w-full mb-2"></div>
+            <div class="skeleton h-48 w-full mb-2"></div>
+            <div class="skeleton h-48 w-full"></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Bottom Navigation (mobile) -->
+      <div class="btm-nav btm-nav-sm lg:hidden border-t border-base-200 bg-base-100 z-30">
+        <a href="#dashboard" class="bottom-nav-link" :class="Alpine.store('router').current === 'dashboard' ? 'active' : ''">
+          <i class="bi bi-speedometer2"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#contactos" class="bottom-nav-link" :class="Alpine.store('router').current === 'contactos' ? 'active' : ''">
+          <i class="bi bi-people"></i>
+          <span>Contactos</span>
+        </a>
+        <a href="#historial" class="bottom-nav-link" :class="Alpine.store('router').current === 'historial' ? 'active' : ''">
+          <i class="bi bi-clock-history"></i>
+          <span>Historial</span>
+        </a>
+        <a href="#plantillas" class="bottom-nav-link" :class="Alpine.store('router').current === 'plantillas' ? 'active' : ''">
+          <i class="bi bi-files"></i>
+          <span>Plantillas</span>
+        </a>
+        <a href="#recordatorios" class="bottom-nav-link" :class="Alpine.store('router').current === 'recordatorios' ? 'active' : ''">
+          <i class="bi bi-bell"></i>
+          <span>Recordatorios</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="drawer-side z-40">
+      <label for="app-drawer" class="drawer-overlay"></label>
+      <aside class="bg-base-100 w-64 min-h-full border-r border-base-200 p-4 flex flex-col">
+        <!-- App Brand -->
+        <div class="flex items-center gap-3 px-3 py-4 mb-4">
+          <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-content font-bold">
+            AC
+          </div>
+          <div>
+            <div class="font-bold text-base">AHA Contactos</div>
+            <div class="text-xs text-base-content/50">CRM para vendedores</div>
+          </div>
+        </div>
+
+        <!-- Nav -->
+        <nav class="flex-1 space-y-1">
+          <a href="#dashboard" class="sidebar-link" :class="Alpine.store('router').current === 'dashboard' ? 'active' : ''">
+            <i class="bi bi-speedometer2 text-lg"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="#contactos" class="sidebar-link" :class="Alpine.store('router').current === 'contactos' ? 'active' : ''">
+            <i class="bi bi-people text-lg"></i>
+            <span>Contactos</span>
+          </a>
+          <a href="#historial" class="sidebar-link" :class="Alpine.store('router').current === 'historial' ? 'active' : ''">
+            <i class="bi bi-clock-history text-lg"></i>
+            <span>Historial</span>
+          </a>
+          <a href="#plantillas" class="sidebar-link" :class="Alpine.store('router').current === 'plantillas' ? 'active' : ''">
+            <i class="bi bi-files text-lg"></i>
+            <span>Plantillas</span>
+          </a>
+          <a href="#recordatorios" class="sidebar-link" :class="Alpine.store('router').current === 'recordatorios' ? 'active' : ''">
+            <i class="bi bi-bell text-lg"></i>
+            <span>Recordatorios</span>
+          </a>
+        </nav>
+
+        <!-- Footer -->
+        <div class="border-t border-base-200 pt-3 mt-4">
+          <div class="text-xs text-base-content/40 text-center" x-text="'v' + (APP_CONFIG?.app?.version || '1.0.0') + ' · AHA'"></div>
+          <div class="text-xs text-base-content/30 text-center mt-1">Plan: <span class="font-medium" x-text="APP_CONFIG?.plan || 'lite'"></span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ========== LIBS ========== -->
+
+  <!-- JS Librerías base -->
+  <script src="assets/js/libs/alpine.js"></script>
+  <script src="assets/js/libs/dexie.js"></script>
+  <script src="assets/js/libs/crypto-js.js"></script>
+  <script src="assets/js/libs/pako.js"></script>
+  <script src="assets/js/libs/chart.js"></script>
+
+  <!-- ========== CORE ========== -->
+  <script src="core/env.js"></script>
+  <script src="core/db.js"></script>
+  <script src="core/crypto.js"></script>
+  <script src="core/ui.js"></script>
+  <script src="core/theme.js"></script>
+  <script src="core/network.js"></script>
+  <script src="core/app.js"></script>
+  <script src="core/search-palette.js"></script>
+  <script src="core/file-store.js"></script>
+  <script src="core/sync.js"></script>
+  <script src="core/license.js"></script>
+  <script src="core/seed.js"></script>
+  <script src="core/main.js"></script>
+
+  <!-- project.config.js (fallback) -->
+  <script src="project.config.js"></script>
+</body>
+</html>

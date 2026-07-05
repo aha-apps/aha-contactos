@@ -1,0 +1,39 @@
+<!-- modules/historial/module.html -->
+<div x-data="historialData()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="bi bi-clock-history text-primary"></i> Historial
+    </h2>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button class="btn btn-primary" onclick="AHHistorial.abrirForm()">
+      <i class="bi bi-plus-lg"></i> Registrar
+    </button>
+    <div id="historial-filtro-contacto" class="flex-1 min-w-[200px]">
+      <select class="select select-bordered w-full max-w-xs">
+        <option value="">Cargando...</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div id="historial-lista">
+    <div class="space-y-4">
+      <div class="skeleton h-16 w-full"></div>
+      <div class="skeleton h-16 w-full"></div>
+      <div class="skeleton h-16 w-full"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function historialData() {
+  return {
+    init() {
+      // Ya manejado por module.js
+    }
+  };
+}
+</script>

@@ -1,0 +1,45 @@
+<!-- modules/recordatorios/module.html -->
+<div x-data="recordatoriosData()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="bi bi-bell text-primary"></i> Recordatorios
+    </h2>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button class="btn btn-primary" onclick="AHRecordatorios.abrirForm()">
+      <i class="bi bi-plus-lg"></i> Nuevo
+    </button>
+    <div class="join">
+      <button class="btn btn-sm join-item filtro-periodo-btn btn-active" data-periodo="hoy" onclick="AHRecordatorios.filtrar('hoy')">
+        Hoy
+      </button>
+      <button class="btn btn-sm join-item filtro-periodo-btn" data-periodo="semana" onclick="AHRecordatorios.filtrar('semana')">
+        Semana
+      </button>
+      <button class="btn btn-sm join-item filtro-periodo-btn" data-periodo="todos" onclick="AHRecordatorios.filtrar('todos')">
+        Todos
+      </button>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div id="recordatorios-lista">
+    <div class="space-y-3">
+      <div class="skeleton h-16 w-full"></div>
+      <div class="skeleton h-16 w-full"></div>
+      <div class="skeleton h-16 w-full"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function recordatoriosData() {
+  return {
+    init() {
+      // Ya manejado por module.js
+    }
+  };
+}
+</script>

@@ -1,0 +1,30 @@
+<!-- modules/plantillas/module.html -->
+<div x-data="plantillasData()" x-init="init()" class="animate__animated animate__fadeInUp">
+  <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <h2 class="text-2xl font-bold flex items-center gap-2">
+      <i class="bi bi-files text-primary"></i> Plantillas
+    </h2>
+    <button class="btn btn-primary" onclick="AHPlantillas.abrirForm()">
+      <i class="bi bi-plus-lg"></i> Nueva plantilla
+    </button>
+  </div>
+
+  <!-- Grid de plantillas por categoría -->
+  <div id="plantillas-grid">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="skeleton h-40"></div>
+      <div class="skeleton h-40"></div>
+      <div class="skeleton h-40"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function plantillasData() {
+  return {
+    init() {
+      // Ya manejado por module.js
+    }
+  };
+}
+</script>
